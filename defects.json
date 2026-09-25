@@ -1,0 +1,12 @@
+[
+  {"id":"double-charge","expected":"A retry charges once","expectedState":"1 charge recorded"},
+  {"id":"missing-receipt","expected":"Payment displays receipt","expectedState":"Receipt displayed"},
+  {"id":"empty-cart","expected":"Empty cart cannot pay","expectedState":"Payment rejected"},
+  {"id":"expired-card","expected":"Expired card rejected","expectedState":"Payment rejected"},
+  {"id":"wrong-total","expected":"Total matches line items","expectedState":"Total 30"},
+  {"id":"no-inventory","expected":"Unavailable stock cannot sell","expectedState":"Sale rejected"},
+  {"id":"stale-session","expected":"Expired session signs out","expectedState":"Session rejected"},
+  {"id":"address-loss","expected":"Address survives navigation","expectedState":"Address saved"},
+  {"id":"tax-error","expected":"Tax shown before payment","expectedState":"Tax 5"},
+  {"id":"duplicate-order","expected":"One click creates one order","expectedState":"1 order created"}
+]

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+mkdir -p "$DATA_DIR" "$EVIDENCE_DIR"
+node app.mjs > "$DATA_DIR/server.log" 2>&1 &
+echo "$!" > "$DATA_DIR/server.pid"
+echo "READY http://127.0.0.1:$PORT_BASE"

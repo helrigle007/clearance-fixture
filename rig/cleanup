@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+if [ -f "$DATA_DIR/server.pid" ]; then
+  kill "$(head -1 "$DATA_DIR/server.pid")" 2>/dev/null || true
+  rm -f "$DATA_DIR/server.pid"
+fi

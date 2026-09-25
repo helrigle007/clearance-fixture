@@ -1,0 +1,32 @@
+name: Fixture
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+jobs:
+  fixture-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check app.mjs
+      - name: Drive checkout on app changes
+        env:
+          GH_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$GH_BASE" ]; then
+            git fetch --depth=1 origin "$GH_BASE"
+            if ! git diff --name-only "$GH_BASE" HEAD | grep -qx app.mjs; then
+              exit 0
+            fi
+          fi
+          export FLIGHT_ID=ci PORT_BASE=41879 PORT_COUNT=1 DATA_DIR="$RUNNER_TEMP/checkout-data" EVIDENCE_DIR="$RUNNER_TEMP/checkout-evidence"
+          mkdir -p "$DATA_DIR" "$EVIDENCE_DIR"
+          trap './rig/cleanup' EXIT
+          ./rig/launch
+          ./rig/doctor
+          node rig/drive/checkout.mjs "http://127.0.0.1:$PORT_BASE" "$EVIDENCE_DIR" > "$RUNNER_TEMP/scenarios.json"
+          node -e 'const s=JSON.parse(require("node:fs").readFileSync(process.argv[1],"utf8")).scenarios; if(s.length!==10||s.some(x=>x.result!=="passed"||!x.live)) process.exit(1)' "$RUNNER_TEMP/scenarios.json"
